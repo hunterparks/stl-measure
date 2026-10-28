@@ -1,0 +1,7 @@
+services:
+  stl-measure:
+    build: .
+    container_name: stl-measure
+    ports:
+      - "${PORT:-3000}:8080"
+    restart: unless-stopped
