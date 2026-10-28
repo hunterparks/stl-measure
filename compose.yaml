@@ -1,5 +1,8 @@
 services:
   stl-measure:
+    # `docker compose up -d` pulls the published image;
+    # `docker compose up -d --build` builds it from this checkout instead.
+    image: ghcr.io/hunterparks/stl-measure:latest
     build: .
     container_name: stl-measure
     ports:

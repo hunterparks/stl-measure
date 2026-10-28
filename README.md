@@ -10,13 +10,26 @@ Live at **https://stl.stup.dev**.
 
 **GitHub Pages**: every push to `main` builds and deploys the site via `.github/workflows/deploy.yml`. One-time repo setup: *Settings → Pages → Source: GitHub Actions*, and *Custom domain: `stl.stup.dev`* (with a DNS `CNAME` record pointing `stl` to `hunterparks.github.io`).
 
-**Docker** (served by nginx):
+**Self-host with Docker**: a prebuilt image (amd64, arm64 and armv7, so it also runs on a Raspberry Pi) is published to `ghcr.io/hunterparks/stl-measure`:
 
 ```sh
-docker compose up -d --build
+docker run -d --name stl-measure -p 3000:8080 --restart unless-stopped ghcr.io/hunterparks/stl-measure:latest
 ```
 
-Then open http://localhost:3000. To use a different port: `PORT=8080 docker compose up -d --build`.
+Or with Compose:
+
+```yaml
+services:
+  stl-measure:
+    image: ghcr.io/hunterparks/stl-measure:latest
+    ports:
+      - "3000:8080"
+    restart: unless-stopped
+```
+
+Then open http://localhost:3000. The container is nginx serving static files on port 8080, runs as a non-root user, and has a health check. Tags: `latest` follows `main`; release tags like `v1.2.3` also publish `1.2.3`, `1.2` and `1`.
+
+To build from source instead: `docker compose up -d --build` (set `PORT=8080` to change the host port).
 
 **Other static hosts**: run `npm run build` and upload the `build/` folder. If the site lives under a subpath, build with `BASE_PATH=/your-path npm run build`.
 
